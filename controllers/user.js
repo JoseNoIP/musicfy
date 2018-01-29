@@ -2,6 +2,7 @@
 
 var bcrypt = require('bcrypt-nodejs')
 var User = require('../models/user')
+var jwt = require('../services/jwt')
 
 
 function test(req, res) {
@@ -80,6 +81,7 @@ function loginUser(req, res) {
 					//Response user data
 					if (params.gethash) {
 						// Response jwt token
+						res.status(200).send({token: jwt.createToken(user)})
 					}else{
 						res.status(200).send({user})
 					}
@@ -96,9 +98,26 @@ function loginUser(req, res) {
 
 }
 
+function updateUser(req, res) {
+	var userId = req.params.id
+	var update = req.body
+
+	User.findByIdAndUpdate(userId, update, (err, userUpdated) => {
+		if (err) {
+			res.status(500).send({message: 'An err was occurred...'})
+		}else if(!userUpdated){
+			res.status(404).send({message: 'Cant update user...'})
+		}else{
+			res.status(200).send({user: userUpdated})
+		}
+	})
+
+}
+
 
 module.exports = {
 	test,
 	saveUser,
-	loginUser
+	loginUser,
+	updateUser
 }
