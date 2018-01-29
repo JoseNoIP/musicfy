@@ -115,9 +115,42 @@ function updateUser(req, res) {
 }
 
 
+function uploadImage(req, res){
+	var userId = req.params.id
+	var file_name = 'Don\'t upload...'
+
+	if (req.files) {
+
+		var file_path = req.files.image.path
+		var path_split = file_path.split('\/');
+		file_name = path_split[path_split.length - 1]
+		var ext_split = file_name.split('\.')
+		var ext = ext_split[ext_split.length - 1].toLowerCase();
+
+		if (ext == 'jpg' || ext == 'jpeg' || ext == 'png' || ext == 'gif') {
+
+			User.findByIdAndUpdate(userId, {image: file_name}, (err, userUpdated) => {
+				if (!userUpdated) {
+					res.status(404).send({message: 'User not updated...'})
+				} else {
+					res.status(200).send({user: userUpdated})
+				}
+			})
+
+		}else{
+			res.status(200).send({message: 'Image attached not valid extension...'})
+		}
+
+	}else{
+		res.status(200).send({message: 'Image not attached...'})
+	}
+}
+
+
 module.exports = {
 	test,
 	saveUser,
 	loginUser,
-	updateUser
+	updateUser,
+	uploadImage
 }

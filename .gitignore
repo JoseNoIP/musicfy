@@ -1,3 +1,6 @@
+#App folders
+uploads/users/*
+
 # Logs
 logs
 *.log
